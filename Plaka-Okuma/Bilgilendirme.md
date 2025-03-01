@@ -1,1 +1,0 @@
-Ezeciye bOve tennim.
