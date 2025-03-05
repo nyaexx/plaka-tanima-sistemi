@@ -38,7 +38,7 @@ def select_file():
 
 # Liste kutusunu güncelleme
 def update_plate_list():
-    if selected_file and "listbox" in globals():  # `listbox` tanımlı mı kontrol et
+    if selected_file and current_page == "Plakalar":  # Sadece Plakalar sayfasında listeyi güncelle
         plate_data = read_plate_data(selected_file)
         listbox.delete(0, tk.END)  # Önceki içerikleri temizle
         for plate in plate_data:
