@@ -1,0 +1,89 @@
+import tkinter as tk
+from tkinter import ttk, filedialog
+
+# Ana pencereyi oluştur
+root = tk.Tk()
+root.title("Gelişmiş Program Arayüzü")
+root.geometry("800x500")
+root.configure(bg="#2b2b2b")
+
+def read_plate_data(filename):
+    try:
+        with open(filename, "r", encoding="utf-8") as file:
+            plate_data = file.readlines()
+            print(f"Dosya açıldı: {filename}")  # ✅ Dosyanın açıldığını göster
+            print(f"Dosya içeriği (ham veri): {plate_data}")  # ✅ Ham veri olarak oku
+            return plate_data
+    except FileNotFoundError:
+        print("Dosya bulunamadı!")  # ✅ Eğer hata olursa mesaj ver
+        return ["Plaka verisi bulunamadı."]
+    except Exception as e:
+        print(f"Dosya okunurken hata oluştu: {e}")  # ✅ Genel hata yakalama
+        return ["Dosya okunurken hata oluştu."]
+
+
+# Yan Menü (Sidebar)
+sidebar = tk.Frame(root, bg="#333", width=200, height=500)
+sidebar.pack(side="left", fill="y")
+
+# İçerik Alanı
+content_frame = tk.Frame(root, bg="#444", width=600, height=500)
+content_frame.pack(side="right", fill="both", expand=True)
+
+# Seçilen dosya yolu
+selected_file = None
+
+# Dosyadan plaka verilerini oku
+def read_plate_data(filename):
+    try:
+        with open(filename, "r", encoding="utf-8") as file:
+            plate_data = file.readlines()
+            print("Dosya içeriği:", plate_data)  # ✅ Terminalde içeriği göster
+            return plate_data
+    except FileNotFoundError:
+        print("Dosya bulunamadı!")  # ✅ Eğer hata olursa mesaj ver
+        return ["Plaka verisi bulunamadı."]
+
+# Dosya seçme işlemi
+def select_file():
+    global selected_file
+    file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
+    if file_path:
+        selected_file = file_path
+        print("Seçilen dosya:", selected_file)  # ✅ Dosya yolu ekrana yazdır
+        switch_page("Plakalar")
+
+# Sidebar Butonları
+def switch_page(page_name):
+    global selected_file
+    for widget in content_frame.winfo_children():
+        widget.destroy()
+    label = tk.Label(content_frame, text=page_name, font=("Arial", 20), fg="white", bg="#444")
+    label.pack(pady=10)
+    
+    if page_name == "Plakalar":
+        btn_select = tk.Button(content_frame, text="Plaka Dosyasını Seç", font=("Arial", 12), bg="#777", fg="white", command=select_file)
+        btn_select.pack(pady=10)
+        
+        if selected_file:
+            plate_data = read_plate_data(selected_file)
+            listbox = tk.Listbox(content_frame, font=("Arial", 14), bg="#555", fg="white", width=50, height=15)
+            listbox.pack(pady=10)
+            for plate in plate_data:
+                listbox.insert(tk.END, plate.strip())
+
+buttons = [
+    ("Ana Sayfa", lambda: switch_page("Ana Sayfa")),
+    ("Plakalar", lambda: switch_page("Plakalar")),
+    ("Hakkında", lambda: switch_page("Hakkında"))
+]
+
+for text, command in buttons:
+    btn = tk.Button(sidebar, text=text, font=("Arial", 14), bg="#555", fg="white", padx=10, pady=5, command=command)
+    btn.pack(pady=10, fill="x")
+
+# İlk sayfa açılışı
+switch_page("Ana Sayfa")
+
+# Ana döngüyü başlat
+root.mainloop()
