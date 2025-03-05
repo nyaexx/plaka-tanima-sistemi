@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, filedialog
+from tkinter import filedialog
 
 # Ana pencereyi oluştur
 root = tk.Tk()
@@ -7,20 +7,42 @@ root.title("Gelişmiş Program Arayüzü")
 root.geometry("800x500")
 root.configure(bg="#2b2b2b")
 
+# Seçilen dosya yolu
+selected_file = None
+current_page = None  # Hangi sayfada olduğumuzu takip etmek için değişken
+
+# Dosyadan plaka verilerini oku
 def read_plate_data(filename):
     try:
         with open(filename, "r", encoding="utf-8") as file:
             plate_data = file.readlines()
-            print(f"Dosya açıldı: {filename}")  # ✅ Dosyanın açıldığını göster
-            print(f"Dosya içeriği (ham veri): {plate_data}")  # ✅ Ham veri olarak oku
+            print(f"Dosya açıldı: {filename}")  
+            print(f"Dosya içeriği: {plate_data}")  # ✅ Terminalde içeriği göster
             return plate_data
     except FileNotFoundError:
-        print("Dosya bulunamadı!")  # ✅ Eğer hata olursa mesaj ver
+        print("Dosya bulunamadı!")
         return ["Plaka verisi bulunamadı."]
     except Exception as e:
-        print(f"Dosya okunurken hata oluştu: {e}")  # ✅ Genel hata yakalama
+        print(f"Dosya okunurken hata oluştu: {e}")
         return ["Dosya okunurken hata oluştu."]
 
+# Dosya seçme işlemi
+def select_file():
+    global selected_file
+    file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
+    if file_path:
+        selected_file = file_path
+        print("Seçilen dosya:", selected_file)
+        if current_page == "Plakalar":  # Sadece Plakalar sayfasında listeyi güncelle
+            update_plate_list()
+
+# Liste kutusunu güncelleme
+def update_plate_list():
+    if selected_file and "listbox" in globals():  # `listbox` tanımlı mı kontrol et
+        plate_data = read_plate_data(selected_file)
+        listbox.delete(0, tk.END)  # Önceki içerikleri temizle
+        for plate in plate_data:
+            listbox.insert(tk.END, plate.strip())
 
 # Yan Menü (Sidebar)
 sidebar = tk.Frame(root, bg="#333", width=200, height=500)
@@ -30,48 +52,37 @@ sidebar.pack(side="left", fill="y")
 content_frame = tk.Frame(root, bg="#444", width=600, height=500)
 content_frame.pack(side="right", fill="both", expand=True)
 
-# Seçilen dosya yolu
-selected_file = None
-
-# Dosyadan plaka verilerini oku
-def read_plate_data(filename):
-    try:
-        with open(filename, "r", encoding="utf-8") as file:
-            plate_data = file.readlines()
-            print("Dosya içeriği:", plate_data)  # ✅ Terminalde içeriği göster
-            return plate_data
-    except FileNotFoundError:
-        print("Dosya bulunamadı!")  # ✅ Eğer hata olursa mesaj ver
-        return ["Plaka verisi bulunamadı."]
-
-# Dosya seçme işlemi
-def select_file():
-    global selected_file
-    file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
-    if file_path:
-        selected_file = file_path
-        print("Seçilen dosya:", selected_file)  # ✅ Dosya yolu ekrana yazdır
-        switch_page("Plakalar")
-
-# Sidebar Butonları
+# Sayfa değiştirme
 def switch_page(page_name):
-    global selected_file
+    global listbox, scrollbar, listbox_frame, current_page  
+    current_page = page_name  # Sayfa adını takip et
+
     for widget in content_frame.winfo_children():
         widget.destroy()
+    
     label = tk.Label(content_frame, text=page_name, font=("Arial", 20), fg="white", bg="#444")
     label.pack(pady=10)
     
     if page_name == "Plakalar":
-        btn_select = tk.Button(content_frame, text="Plaka Dosyasını Seç", font=("Arial", 12), bg="#777", fg="white", command=select_file)
+        btn_select = tk.Button(content_frame, text="Plaka Dosyasını Seç", font=("Arial", 12), bg="#777", fg="white", relief="flat", command=select_file)
         btn_select.pack(pady=10)
-        
-        if selected_file:
-            plate_data = read_plate_data(selected_file)
-            listbox = tk.Listbox(content_frame, font=("Arial", 14), bg="#555", fg="white", width=50, height=15)
-            listbox.pack(pady=10)
-            for plate in plate_data:
-                listbox.insert(tk.END, plate.strip())
 
+        # Yeni liste çerçevesi oluştur
+        listbox_frame = tk.Frame(content_frame, bg="#444")
+        listbox_frame.pack(pady=10)
+
+        # Yeni liste ve scrollbar oluştur
+        scrollbar = tk.Scrollbar(listbox_frame, orient=tk.VERTICAL)
+        listbox = tk.Listbox(listbox_frame, font=("Arial", 14), bg="#555", fg="white", width=50, height=15, yscrollcommand=scrollbar.set)
+        scrollbar.config(command=listbox.yview)
+
+        listbox.pack(side=tk.LEFT, fill=tk.BOTH)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Seçili dosya varsa listeyi güncelle
+        update_plate_list()
+
+# Sidebar Butonları
 buttons = [
     ("Ana Sayfa", lambda: switch_page("Ana Sayfa")),
     ("Plakalar", lambda: switch_page("Plakalar")),
@@ -79,7 +90,7 @@ buttons = [
 ]
 
 for text, command in buttons:
-    btn = tk.Button(sidebar, text=text, font=("Arial", 14), bg="#555", fg="white", padx=10, pady=5, command=command)
+    btn = tk.Button(sidebar, text=text, font=("Arial", 14), bg="#555", fg="white", padx=10, pady=5, relief="flat", command=command)
     btn.pack(pady=10, fill="x")
 
 # İlk sayfa açılışı
