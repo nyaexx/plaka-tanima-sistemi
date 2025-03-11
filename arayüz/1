@@ -1,23 +1,24 @@
 import tkinter as tk
 from tkinter import filedialog
 
-# Ana pencereyi oluştur
+
 root = tk.Tk()
 root.title("Gelişmiş Program Arayüzü")
 root.geometry("800x500")
 root.configure(bg="#2b2b2b")
 
-# Seçilen dosya yolu
-selected_file = None
-current_page = None  # Hangi sayfada olduğumuzu takip etmek için değişken
+# Seçilen dosya yolu bak unutma buraya yol yazmassan çalışmaz.
+selected_file = "C:\\Users\\PC\\Desktop\\dosya\\plaka.txt"
+current_page = None  
 
-# Dosyadan plaka verilerini oku
+DOSYA_YOLU = "C:\\Users\\PC\\Desktop\\dosya\\plaka.txt"
+
 def read_plate_data(filename):
     try:
-        with open(filename, "r", encoding="utf-8") as file:
+        with open(DOSYA_YOLU, "r", encoding="utf-8") as file:
             plate_data = file.readlines()
             print(f"Dosya açıldı: {filename}")  
-            print(f"Dosya içeriği: {plate_data}")  # ✅ Terminalde içeriği göster
+            
             return plate_data
     except FileNotFoundError:
         print("Dosya bulunamadı!")
@@ -26,15 +27,6 @@ def read_plate_data(filename):
         print(f"Dosya okunurken hata oluştu: {e}")
         return ["Dosya okunurken hata oluştu."]
 
-# Dosya seçme işlemi
-def select_file():
-    global selected_file
-    file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
-    if file_path:
-        selected_file = file_path
-        print("Seçilen dosya:", selected_file)
-        if current_page == "Plakalar":  # Sadece Plakalar sayfasında listeyi güncelle
-            update_plate_list()
 
 # Liste kutusunu güncelleme
 def update_plate_list():
@@ -64,8 +56,6 @@ def switch_page(page_name):
     label.pack(pady=10)
     
     if page_name == "Plakalar":
-        btn_select = tk.Button(content_frame, text="Plaka Dosyasını Seç", font=("Arial", 12), bg="#777", fg="white", relief="flat", command=select_file)
-        btn_select.pack(pady=10)
 
         # Yeni liste çerçevesi oluştur
         listbox_frame = tk.Frame(content_frame, bg="#444")
