@@ -1,17 +1,17 @@
 import tkinter as tk
 from tkinter import filedialog
 
-
 root = tk.Tk()
 root.title("Gelişmiş Program Arayüzü")
 root.geometry("800x500")
 root.configure(bg="#2b2b2b")
 
 # Seçilen dosya yolu bak unutma buraya yol yazmassan çalışmaz.
-selected_file = "C:\\Users\\PC\\Desktop\\dosya\\plaka.txt"
+selected_file = "C:\\Users\\Administrator\\Desktop\\plakalar\\plaka.txt"
 current_page = None  
+previous_content = []
 
-DOSYA_YOLU = "C:\\Users\\PC\\Desktop\\dosya\\plaka.txt"
+DOSYA_YOLU = "C:\\Users\\Administrator\\Desktop\\plakalar\\plaka.txt"
 
 def read_plate_data(filename):
     try:
@@ -27,14 +27,38 @@ def read_plate_data(filename):
         print(f"Dosya okunurken hata oluştu: {e}")
         return ["Dosya okunurken hata oluştu."]
 
-
 # Liste kutusunu güncelleme
 def update_plate_list():
+    global previous_content
     if selected_file and current_page == "Plakalar":  # Sadece Plakalar sayfasında listeyi güncelle
         plate_data = read_plate_data(selected_file)
-        listbox.delete(0, tk.END)  # Önceki içerikleri temizle
-        for plate in plate_data:
+    
+        print("Güncel Veri:", plate_data)  # Hata ayıklama için
+        print("Önceki Veri:", previous_content)  # Hata ayıklama için
+
+# txt dosyasındaki veri değişince liste kutusunun güncellenmesi için
+        if plate_data != previous_content: 
+          listbox.delete(0, tk.END)  # Önceki içerikleri temizle
+          for plate in plate_data:
             listbox.insert(tk.END, plate.strip())
+            previous_content = plate_data
+
+def load_data():
+    try:
+        with open('C:\\Users\\Administrator\\Desktop\\plakalar\\plaka.txt', 'r') as file:
+            lines = file.readlines()
+            listbox.delete(0, tk.END)  # Mevcut verileri temizle
+            for line in lines:
+                listbox.insert(tk.END, line.strip())  # Yeni verileri ekle
+    except Exception as e:
+        print(f"Veri yüklenirken hata oluştu: {e}")
+
+def show_plakalar_page():
+    load_data()  # Plakalar sayfasına geçmeden önce verileri yükle
+    # Diğer sayfa içeriklerini güncelle
+
+# plaka listesinin sürekli güncellenmesi için gereken komut           
+    root.after(3000, update_plate_list)
 
 # Yan Menü (Sidebar)
 sidebar = tk.Frame(root, bg="#333", width=200, height=500)
