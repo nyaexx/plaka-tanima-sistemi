@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox, simpledialog
+import cv2
+from PIL import Image, ImageTk
 
 root = tk.Tk()
 root.title("Gelişmiş Program Arayüzü")
@@ -7,7 +9,7 @@ root.geometry("800x500")
 root.configure(bg="#2b2b2b")
 
 # Seçilen dosya yolu
-DOSYA_YOLU = "C:\\Users\\Administrator\\Desktop\\plakalar\\plaka.txt"
+DOSYA_YOLU = "C:\\Users\\PC\\Desktop\\plakalar\\veri.txt"
 current_page = None  
 previous_content = []
 
@@ -15,6 +17,9 @@ previous_content = []
 listbox_frame = None
 listbox = None
 scrollbar = None
+search_entry = None
+camera_label = None
+cap = None
 
 def read_plate_data():
     try:
@@ -41,9 +46,6 @@ def update_plate_list():
         for plate in plate_data:
             listbox.insert(tk.END, plate.strip())
         previous_content = plate_data
-        
-        # Sürekli güncelleme için
-        root.after(3000, update_plate_list)
 
 def add_plate():
     # Kullanıcıdan plaka bilgisi al
@@ -62,25 +64,97 @@ def add_plate():
 def delete_plate():
     # Seçili plakayı al
     selected_plate = listbox.get(tk.ACTIVE)
-    if selected_plate:  # Eğer bir plaka seçildiyse
-        # Onay mesajı göster
-        confirm = messagebox.askyesno("Plaka Sil", f"'{selected_plate}' plakasını silmek istediğinize emin misiniz?")
-        if confirm:  # Eğer kullanıcı onaylarsa
-            try:
-                # Dosyadan seçili plakayı sil
-                with open(DOSYA_YOLU, "r", encoding="utf-8") as file:
-                    lines = file.readlines()
-                with open(DOSYA_YOLU, "w", encoding="utf-8") as file:
-                    for line in lines:
-                        if line.strip() != selected_plate:  # Seçili plakayı atla
-                            file.write(line)
-                # Listbox'ı güncelle
-                update_plate_list()
-                messagebox.showinfo("Başarılı", "Plaka başarıyla silindi!")
-            except Exception as e:
-                messagebox.showerror("Hata", f"Plaka silinirken hata oluştu: {e}")
-    else:
+    
+    # Eğer bir plaka seçilmediyse uyarı göster
+    if not selected_plate:
         messagebox.showwarning("Uyarı", "Lütfen bir plaka seçin!")
+        return
+    
+    # Onay mesajı göster
+    confirm = messagebox.askyesno("Plaka Sil", f"'{selected_plate}' plakasını silmek istediğinize emin misiniz?")
+    
+    if confirm:  # Eğer kullanıcı onaylarsa
+        try:
+            # Dosyadan seçili plakayı sil
+            with open(DOSYA_YOLU, "r", encoding="utf-8") as file:
+                lines = file.readlines()
+            
+            # Seçili plakayı hariç tutarak dosyayı yeniden yaz
+            with open(DOSYA_YOLU, "w", encoding="utf-8") as file:
+                plate_found = False
+                for line in lines:
+                    if line.strip() != selected_plate:  # Seçili plakayı atla
+                        file.write(line)
+                    else:
+                        plate_found = True  # Plaka bulundu
+            
+            # Plakanın silinip silinmediğini kontrol et
+            if plate_found:
+                messagebox.showinfo("Başarılı", f"'{selected_plate}' plakası başarıyla silindi!")
+            else:
+                messagebox.showwarning("Uyarı", f"'{selected_plate}' plakası dosyada bulunamadı!")
+            
+            # Listbox'ı güncelle ve arama sonuçlarını yenile
+            update_plate_list()
+            search_plate()  # Arama sonuçlarını yenile
+        
+        except Exception as e:
+            messagebox.showerror("Hata", f"Plaka silinirken hata oluştu: {e}")
+
+def search_plate():
+    search_text = search_entry.get().strip().lower()  # Kullanıcının girdiği metni al
+    if not search_text:  # Eğer arama kutusu boşsa, tüm plakaları göster
+        update_plate_list()
+        return
+    
+    # Listbox'taki tüm plakaları al
+    all_plates = listbox.get(0, tk.END)
+    
+    # Filtrelenmiş plakaları bul
+    filtered_plates = [plate for plate in all_plates if search_text in plate.lower()]
+    
+    # Listbox'ı güncelle
+    listbox.delete(0, tk.END)
+    for plate in filtered_plates:
+        listbox.insert(tk.END, plate)
+
+def toggle_fullscreen(event=None):
+    # Tam ekran modunu aç/kapat
+    root.attributes("-fullscreen", not root.attributes("-fullscreen"))
+
+def show_camera():
+    global camera_label, cap
+
+    # Kamera başlat
+    cap = cv2.VideoCapture(0)
+
+    def update_frame():
+        ret, frame = cap.read()
+        if ret:
+            # Görüntüyü yeniden boyutlandır
+            frame = cv2.resize(frame, (960, 540))  # İstediğiniz boyutu ayarlayın
+            # OpenCV görüntüsünü PIL formatına çevir
+            cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            img = Image.fromarray(cv2image)
+            imgtk = ImageTk.PhotoImage(image=img)
+            # Görüntüyü label'a ekle
+            camera_label.imgtk = imgtk
+            camera_label.configure(image=imgtk)
+        # Görüntüyü sürekli güncelle
+        camera_label.after(10, update_frame)
+
+    # Kamera görüntüsünü göster
+    update_frame()
+
+def stop_camera():
+    global cap
+    if cap:
+        cap.release()
+    if camera_label:
+        camera_label.configure(image=None)
+
+# F11 tuşuna basıldığında tam ekran modunu tetikle
+root.bind("<F11>", toggle_fullscreen)
 
 # Yan Menü (Sidebar)
 sidebar = tk.Frame(root, bg="#333", width=200, height=500)
@@ -92,21 +166,36 @@ content_frame.pack(side="right", fill="both", expand=True)
 
 # Sayfa değiştirme
 def switch_page(page_name):
-    global listbox, scrollbar, listbox_frame, current_page  
+    global listbox, scrollbar, listbox_frame, current_page, search_entry, camera_label  
     current_page = page_name  # Sayfa adını takip et
 
     # İçerik alanını temizle
     for widget in content_frame.winfo_children():
-        if widget not in [listbox_frame]:  # listbox_frame'i silme
-            widget.destroy()
+        widget.destroy()
     
     # Sayfa başlığını oluştur
     label = tk.Label(content_frame, text=page_name, font=("Arial", 20), fg="white", bg="#444")
     label.pack(pady=10)
     
-    if page_name == "Plakalar":
+    if page_name == "Ana Sayfa":
+        # Kamera görüntüsü için label oluştur
+        camera_label = tk.Label(content_frame, bg="#444")
+        camera_label.place(x=10, y=50)  # Sol üste yerleştir
+        show_camera()
+    elif page_name == "Plakalar":
+        # Arama kısmını oluştur
+        search_frame = tk.Frame(content_frame, bg="#444")
+        search_frame.pack(pady=10)
+
+        # Arama giriş kutusu
+        search_entry = tk.Entry(search_frame, font=("Arial", 12), bg="#555", fg="white", width=40)
+        search_entry.pack(side=tk.LEFT, padx=5)
+
+        # Ara butonu
+        search_button = tk.Button(search_frame, text="Ara", font=("Arial", 12), bg="#666", fg="white", command=search_plate)
+        search_button.pack(side=tk.LEFT)
+
         # listbox_frame ve bileşenleri daha önce oluşturulmamışsa oluştur
-        
         if listbox_frame is None:
             listbox_frame = tk.Frame(content_frame, bg="#444")
             listbox_frame.pack(pady=10)
