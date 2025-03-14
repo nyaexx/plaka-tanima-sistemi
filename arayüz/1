@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, simpledialog
 import cv2
 from PIL import Image, ImageTk
+from datetime import datetime
 
 root = tk.Tk()
 root.title("Gelişmiş Program Arayüzü")
@@ -18,7 +19,7 @@ listbox_frame = None
 listbox = None
 scrollbar = None
 search_entry = None
-camera_label = None
+camera_label = None  # camera_label'i global olarak tanımla
 cap = None
 
 def read_plate_data():
@@ -126,14 +127,40 @@ def show_camera():
     global camera_label, cap
 
     # Kamera başlat
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # CAP_DSHOW backend'i kullan
 
     def update_frame():
+        if cap is None or not cap.isOpened():  # Eğer kamera başlatılmamışsa
+            return
+        
         ret, frame = cap.read()
         if ret:
             # Görüntüyü yeniden boyutlandır
             frame = cv2.resize(frame, (960, 540))  # İstediğiniz boyutu ayarlayın
-            # OpenCV görüntüsünü PIL formatına çevir
+
+            # Tarih, saat ve gün bilgilerini al
+            now = datetime.now()
+            date_time = now.strftime("%d/%m/%Y %H:%M:%S")
+            day = now.strftime("%A")
+
+            # Bilgileri kameranın üzerine yazdır
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            font_scale = 0.8
+            font_thickness = 2
+            text_color = (255, 255, 255)  # Beyaz renk
+            bg_color = (0, 0, 0)  # Siyah arka plan
+
+            # Tarih ve saat bilgisini yazdır
+            (text_width, text_height), _ = cv2.getTextSize(date_time, font, font_scale, font_thickness)
+            cv2.rectangle(frame, (10, 10), (10 + text_width, 10 + text_height + 10), bg_color, -1)  # Arka plan
+            cv2.putText(frame, date_time, (10, 10 + text_height), font, font_scale, text_color, font_thickness)
+
+            # Gün bilgisini yazdır
+            (text_width, text_height), _ = cv2.getTextSize(day, font, font_scale, font_thickness)
+            cv2.rectangle(frame, (10, 50), (10 + text_width, 50 + text_height + 10), bg_color, -1)  # Arka plan
+            cv2.putText(frame, day, (10, 50 + text_height), font, font_scale, text_color, font_thickness)
+
+            # Görüntüyü PIL formatına çevir
             cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             img = Image.fromarray(cv2image)
             imgtk = ImageTk.PhotoImage(image=img)
@@ -150,6 +177,7 @@ def stop_camera():
     global cap
     if cap:
         cap.release()
+        cap = None
     if camera_label:
         camera_label.configure(image=None)
 
@@ -166,12 +194,13 @@ content_frame.pack(side="right", fill="both", expand=True)
 
 # Sayfa değiştirme
 def switch_page(page_name):
-    global listbox, scrollbar, listbox_frame, current_page, search_entry, camera_label  
+    global listbox, scrollbar, listbox_frame, current_page, search_entry, camera_label, cap  
     current_page = page_name  # Sayfa adını takip et
 
     # İçerik alanını temizle
     for widget in content_frame.winfo_children():
-        widget.destroy()
+        if widget not in [listbox_frame, camera_label]:  # listbox_frame ve camera_label'i silme
+            widget.destroy()
     
     # Sayfa başlığını oluştur
     label = tk.Label(content_frame, text=page_name, font=("Arial", 20), fg="white", bg="#444")
@@ -179,10 +208,20 @@ def switch_page(page_name):
     
     if page_name == "Ana Sayfa":
         # Kamera görüntüsü için label oluştur
-        camera_label = tk.Label(content_frame, bg="#444")
-        camera_label.place(x=10, y=50)  # Sol üste yerleştir
-        show_camera()
-    elif page_name == "Plakalar":
+        if camera_label is None:
+            camera_label = tk.Label(content_frame, bg="#444")
+            camera_label.pack(pady=10)
+        
+        # Kamera akışını yeniden başlat
+        if cap is None or not cap.isOpened():
+            show_camera()
+    else:
+        # Diğer sayfalarda kamera görüntüsünü gizle ve kamera akışını durdur
+        if camera_label:
+            camera_label.pack_forget()  # Kamera görüntüsünü gizle
+        stop_camera()  # Kamera akışını durdur
+
+    if page_name == "Plakalar":
         # Arama kısmını oluştur
         search_frame = tk.Frame(content_frame, bg="#444")
         search_frame.pack(pady=10)
