@@ -5,12 +5,20 @@ import re
 import time  # Zaman kontrolü için time modülü
 from plaka_tespiti import plaka_konum_don
 from alg2_plaka_tanima import plakaTani
+import subprocess  # subprocess modülünü içe aktar
 
 # Veri setinin bulunduğu dizin
 veri_dizini = "veriseti"
 
 # Veri setindeki tüm dosyaları listele
 veriler = os.listdir(veri_dizini)
+
+# plaka_bilgileri.txt dosyasını temizleyelim (yeni baştan yazalım)
+with open("plaka_bilgileri.txt", "w", encoding="utf-8") as dosya:
+    dosya.write("")  # Dosyayı sıfırlıyoruz
+
+# Plaka doğrulama dosyasını arka planda çalıştırma
+subprocess.Popen(["python", "plaka_dogrulama.py"])  # Bu satır, plaka_dogrulama.py dosyasını başlatır
 
 # Her bir görsel için işlem yap
 for isim in veriler:
@@ -40,7 +48,7 @@ for isim in veriler:
 
     # Plaka bilgisini bir metin dosyasına yazdırma
     with open("plaka_bilgileri.txt", "a", encoding="utf-8") as dosya:
-        dosya.write(f"{isim}: {temizlenmis_plaka}\n")
+        dosya.write(f"{temizlenmis_plaka}\n")  # Dosya adını kaldırdım, sadece plaka bilgisi yazılacak
 
     print(f"{isim} için plaka bilgisi 'plaka_bilgileri.txt' dosyasına yazıldı.")
 
