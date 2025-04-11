@@ -31,36 +31,40 @@ def plakaAyristir(mevcutPlaka):
     mevcutPlaka = mevcutPlaka.tolist()
 
     # plaka bir sayı ile başlamalı
-    # plakanin basında en fazla 2 rakam bulunabilir
     karakterAdim = 0
-    for i in range(len(mevcutPlaka)):
-
+    i = 0
+    while i < len(mevcutPlaka):
         try:
             int(mevcutPlaka[i])
             karakterAdim += 1
+            i += 1
         except:
             if karakterAdim > 0:
                 if i - 2 >= 0:
                     mevcutPlaka = mevcutPlaka[i - 2:]
-
                 break
-            mevcutPlaka.pop(i)
+            else:
+                mevcutPlaka.pop(i)  # i'yi arttırma çünkü aynı index'teki yeni eleman kontrol edilecek
 
-    # plaka bir sayi ile bitmeli
-    # plakanın sonunda en fazla 4 rakam olabilir
+    # plaka bir sayı ile bitmeli
     karakterAdim = 0
-    for i in range(len(mevcutPlaka)):
-        kontrolIndex = -1 + (-1 * karakterAdim)
+    i = 0
+    while i < len(mevcutPlaka):
+        kontrolIndex = -1 - i
         try:
             int(mevcutPlaka[kontrolIndex])
             karakterAdim += 1
+            i += 1
         except:
             if karakterAdim > 0:
                 karIndex = len(mevcutPlaka) - karakterAdim
-                print("karkter:", mevcutPlaka[karIndex])
                 mevcutPlaka = mevcutPlaka[:karIndex + 4]
                 break
-            mevcutPlaka.pop(kontrolIndex)
+            else:
+                try:
+                    mevcutPlaka.pop(kontrolIndex)
+                except IndexError:
+                    break
 
     return mevcutPlaka
 
