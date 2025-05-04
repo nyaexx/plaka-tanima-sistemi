@@ -14,3 +14,8 @@ chmod +x /home/user/baslat.sh
 nano /home/user/baslat.sh
 ```
 Uzantıları girmeniz gereken yerler belirlidir 39. ve 58. satır.
+
+# Script terminal görüntüsü:
+
+![Ekran Görüntüsü 2025-05-04 23-32-35](https://github.com/user-attachments/assets/698ece70-ec21-4bb6-bac0-ede2a9b54947)
+
