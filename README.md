@@ -17,5 +17,11 @@ Uzantıları girmeniz gereken yerler belirlidir 39. ve 58. satır.
 
 # Script terminal görüntüsü:
 
-![Terminal Görüntüsü](https://github.com/user-attachments/assets/698ece70-ec21-4bb6-bac0-ede2a9b54947)
+<div style="text-align: center;">
+  <img alt="Terminal Görüntüsü 1" src="https://github.com/nyaexx/plaka-tanima-sistemi/blob/main/.github/Resimler/terminal1.png" width="100%" height="600px">
+</div>
+
+<div style="text-align: center;">
+  <img alt="Terminal Görüntüsü 1" src="https://github.com/nyaexx/plaka-tanima-sistemi/blob/main/.github/Resimler/terminal2.png" width="100%" height="200px">
+</div>
 
