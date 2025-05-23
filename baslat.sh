@@ -36,7 +36,7 @@ plaka_acildi=false
 arayuz_acildi=false
 
 # Plaka tanıma scriptini çalıştırma
-if python3 /dosya/yolunu/girin/plakatanimanin &> /dev/null; then
+if python3 /dosya/yolunu/girin/plakatanimanin; then
     echo -e "\e[32m-----------------------------\e[0m"
     echo -e "\e[32mPlaka tanıma sistemi başarıyla açıldı!\e[0m"
     echo -e "\e[32m-----------------------------\e[0m"
@@ -44,8 +44,9 @@ if python3 /dosya/yolunu/girin/plakatanimanin &> /dev/null; then
 else
     echo -e "\n\033[1;33m-------------------------------------------------------------------------------------------------\033[0m"
     echo -e "\033[1;31m[HATA] \033[0mPlaka tanıma sistemi başlatılamadı!"
-    echo -e "\033[1;31m[ERROR] \033[0mDosya bulunamadı veya hatalı bir işlem gerçekleşti: /burayada/girin/plakatanimanin"
+    echo -e "\033[1;31m[ERROR] \033[0mDosya bulunamadı veya hatalı bir işlem gerçekleşti: /dosya/yolunu/girin/plakatanimanin"
     echo -e "\033[1;33m-------------------------------------------------------------------------------------------------\033[0m\n"
+    plaka_acildi=false
 fi
 
 sleep 1
@@ -55,7 +56,13 @@ echo -e "\e[0m"
 sleep 2
 
 # Arayüz scriptini çalıştırma
-if python3 /dosya/yolunu/girin/arayuzun &> /dev/null; then
+cd /home/nyaex/Depo/plakaarayüz
+python3 main.py & # Arkaplanda çalıştır
+ARAYUZ_PID=$!    # PID'i kaydet
+
+# PID kontrolü ile arayüzün açılıp açılmadığını kontrol et
+sleep 3 # Arayüzün açılması için kısa bir bekleme
+if ps -p $ARAYUZ_PID > /dev/null; then
     echo -e "\e[32m-------------------------\e[0m"
     echo -e "\e[32mArayüz başarıyla açıldı!\e[0m"
     echo -e "\e[32m--------------------------\e[0m"
@@ -63,8 +70,9 @@ if python3 /dosya/yolunu/girin/arayuzun &> /dev/null; then
 else
     echo -e "\n\033[1;33m------------------------------------------------------------------------------------------------\033[0m"
     echo -e "\033[1;31m[HATA] \033[0mArayüz başlatılamadı!"
-    echo -e "\033[1;31m[ERROR] \033[0mDosya bulunamadı veya hatalı bir işlem gerçekleşti: /buraya/arayuz/yolunu/girin"
+    echo -e "\033[1;31m[ERROR] \033[0mArayüz başlatma işlemi başarısız oldu"
     echo -e "\033[1;33m------------------------------------------------------------------------------------------------\033[0m\n"
+    arayuz_acildi=false
 fi
 
 # Sonuç değerlendirmesi
@@ -106,5 +114,4 @@ echo "      ▄▌                                        "
 echo -e "\e[1;35m"
 echo "---------------------------------------------------"
 exit
-
 
