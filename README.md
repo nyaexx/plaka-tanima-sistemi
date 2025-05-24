@@ -20,3 +20,8 @@ Uzantıları girmeniz gereken yerler 39. ve 58. satırlardır.
 <div style="text-align: center;">
   <img alt="Terminal Görüntüsü 1" src="https://github.com/nyaexx/plaka-tanima-sistemi/blob/main/.github/Resimler/terminal1.png" width="100%" height="600px">
 </div>
+
+---
+
+### Deneysel:
+Deneysel olarak windows için baslat.bat eklenmiştir. Henüz deneme aşamasındadır çalışmayabilir.
