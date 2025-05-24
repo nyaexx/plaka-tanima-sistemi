@@ -24,4 +24,4 @@ Uzantıları girmeniz gereken yerler 39. ve 58. satırlardır.
 ---
 
 ### Deneysel:
-Deneysel olarak windows için baslat.bat eklenmiştir. Henüz deneme aşamasındadır çalışmayabilir.
+**Deneysel olarak windows için baslat.bat eklenmiştir. Çalışmayabilir yakında çalışır versiyonu paylaşılacaktır.**
