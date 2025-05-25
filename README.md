@@ -1,4 +1,4 @@
-# Plaka Tanıma Sistemi
+# Plaka Tanıma Sistemi 
 Kayıtlı plakaları kamera yardımıyla algılayarak bariyeri kontrol eden otomasyon sistemi.
 
 ## Sistemi başlatmak için:
