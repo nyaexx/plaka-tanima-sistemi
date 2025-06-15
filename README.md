@@ -1,6 +1,8 @@
 # Plaka Tanıma Sistemi 
 Kayıtlı plakaları kamera yardımıyla algılayarak bariyeri kontrol eden otomasyon sistemi.
 
+**Proje hala geliştirme aşamasındadır, arayüz çalışıyor olsa da plaka tanıma kodları çalışmıyor ve arayüzle senkron olmayabilir.**
+
 ## Sistemi başlatmak için:
 ```plaintext
 ./baslat.sh
@@ -13,7 +15,7 @@ chmod +x /home/user/baslat.sh
 ```plaintext
 nano /home/user/baslat.sh
 ```
-Uzantıları girmeniz gereken yerler 39. ve 58. satırlardır.
+Uzantıları girmeniz gereken yerler 39. ve 64. satırlardır.
 
 # Script terminal görüntüsü:
 
@@ -25,3 +27,5 @@ Uzantıları girmeniz gereken yerler 39. ve 58. satırlardır.
 
 ### Deneysel:
 **Deneysel olarak windows için baslat.bat eklenmiştir. Çalışmayabilir yakında çalışır versiyonu paylaşılacaktır.**
+
+- **15.06.25 bat dosyası düzenlenmiştir. Windows tarafında test edilmesi gerekiyor.**
