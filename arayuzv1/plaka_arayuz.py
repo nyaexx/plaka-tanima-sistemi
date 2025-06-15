@@ -346,7 +346,7 @@ class Ui_MainWindow(object):
         self.label_camera.setText(QCoreApplication.translate("MainWindow", u"Kamera G\u00f6r\u00fcnt\u00fcs\u00fc Burada", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Plaka G\u00f6r\u00fcnt\u00fcs\u00fc", None))
         self.bariyer_kont.setText(QCoreApplication.translate("MainWindow", u"Bariyeri A\u00e7", None))
-        self.btn_save_plate.setText(QCoreApplication.translate("MainWindow", u"Plakay\u0131 Kaydet", None))
+        self.btn_save_plate.setText(QCoreApplication.translate("MainWindow", u"Plaka Kaydet", None))
         self.btn_clear_plate.setText(QCoreApplication.translate("MainWindow", u"Hepsini Sil", None))
         self.btn_manual.setText(QCoreApplication.translate("MainWindow", u"Kullan\u0131m K\u0131lavuzu", None))
     # retranslateUi

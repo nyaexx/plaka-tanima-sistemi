@@ -20,8 +20,19 @@ class PlakaEklemeDialog(QDialog):
         self.ui.setupUi(self)
         
         # Pencere özelliklerini ayarla
-        self.setModal(True)  # Modal pencere yap
+        self.setModal(True)
         self.setWindowTitle("Plaka Ekle")
+        self.setWindowFlags(Qt.Dialog | Qt.FramelessWindowHint)
+        
+        # Yuvarlak kenarlar için style sheet
+        self.setStyleSheet("""
+            QDialog {
+                background-color: #2b2b2b;
+                border-radius: 10px;
+                border: 2px solid #3b3b3b;
+            }
+        """)
+        
         
         # Buton bağlantıları
         self.ui.pushButton.clicked.connect(self.reject)  # İptal butonu
@@ -286,14 +297,13 @@ class MainWindow(QMainWindow):
                                 button_layout.setSpacing(4)
                                 
                                 # Düzenle butonu
-                                edit_btn = QPushButton("✏️")
+                                edit_btn = QPushButton("edit")
                                 edit_btn.setStyleSheet("""
                                     QPushButton {
                                         background-color: #666867;
                                         color: white;
                                         border-radius: 4px;
                                         padding: 4px 8px;
-                                        font-weight: bold;
                                         min-width: 24px;
                                     }
                                     QPushButton:hover {
@@ -303,14 +313,13 @@ class MainWindow(QMainWindow):
                                 edit_btn.clicked.connect(lambda checked, r=row_position: self.edit_plate_at_row(r))
                                 
                                 # Sil butonu
-                                delete_btn = QPushButton("🗑️")
+                                delete_btn = QPushButton("sil")
                                 delete_btn.setStyleSheet("""
                                     QPushButton {
                                         background-color: #dc3545;
                                         color: white;
                                         border-radius: 4px;
                                         padding: 4px 8px;
-                                        font-weight: bold;
                                         min-width: 24px;
                                     }
                                     QPushButton:hover {
@@ -543,50 +552,22 @@ class MainWindow(QMainWindow):
 
 
 def main():
-    """Ana fonksiyon - Kesin çözüm"""
+    """Ana fonksiyon"""
     app = QApplication(sys.argv)
     
     try:
-        # Splash screen oluştur ve ayarla
         splash = SplashScreen()
-        splash.setWindowFlags(
-            Qt.WindowType.SplashScreen | 
-            Qt.WindowType.WindowStaysOnTopHint | 
-            Qt.WindowType.FramelessWindowHint
-        )
         splash.show()
-        splash.raise_()
-        splash.activateWindow()
-        app.processEvents()
         
-        print("Splash screen gösterildi")
-        
-        # Ana pencereyi oluştur ama gösterme
         window = MainWindow()
         
-        print("Ana pencere oluşturuldu")
-        
         def show_main_window():
-            """Ana pencereyi göster ve splash'i kapat"""
-            try:
-                # Splash'i kapat
-                splash.close()
-                splash.deleteLater()
-                
-                # Ana pencereyi göster
-                window.showMaximized()
-                window.raise_()
-                window.activateWindow()
-                
-                print("Ana pencere başarıyla gösterildi")
-                
-            except Exception as e:
-                print(f"Ana pencere gösterilirken hata: {e}")
+            window.showMaximized()
+            window.raise_()
+            window.activateWindow()
         
-        # 2 saniye sonra ana pencereyi göster
-        QTimer.singleShot(2000, show_main_window)
-        
-        print("Timer başlatıldı")
+        # Splash screen kapandığında ana pencereyi göster
+        splash.finished.connect(show_main_window)
         
         return app.exec()
         
