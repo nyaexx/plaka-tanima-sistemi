@@ -61,7 +61,7 @@ echo -e "\e[0m"
 sleep 2
 
 # Arayüz scriptini çalıştırma
-cd /home/nyaex/Depo/plakaarayüz
+cd main.py nin bulunduğu dizinin yolunu girin örn: /home/nyaex/dosyalar/plakaarayüzü # Arayüz dosyasının bulunduğu dizine git
 python3 main.py & # Arkaplanda çalıştır
 ARAYUZ_PID=$!    # PID'i kaydet
 

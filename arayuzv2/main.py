@@ -92,7 +92,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         
         # Pencere ayarları
-        self.setWindowTitle("Plaka Tanıma Sistemi v1.0")
+        self.setWindowTitle("Plaka Tanıma Sistemi v2.0")
         self.setMinimumSize(1200, 600)
         
         # Plakalar dosyası
@@ -493,7 +493,7 @@ class MainWindow(QMainWindow):
     def show_manual(self):
         """Kullanım kılavuzunu göster"""
         manual_text = """
-🚗 PLAKA TANIMA SİSTEMİ KULLANIM KILAVUZU v1.0
+🚗 PLAKA TANIMA SİSTEMİ KULLANIM KILAVUZU v2.0
 
 📍 ANASAYFA:
 • Kamera görüntüsü bu bölümde gösterilir
