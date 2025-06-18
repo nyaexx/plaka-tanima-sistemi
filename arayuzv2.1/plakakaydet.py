@@ -122,6 +122,7 @@ class Ui_plakaeklemepenceresi(object):
         # İptal butonu
         self.pushButton = QPushButton(self.frame)
         self.pushButton.setObjectName(u"pushButton")
+        self.pushButton.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.pushButton.setGeometry(QRect(20, 290, 131, 41))
         self.pushButton.setStyleSheet(u"""
             QPushButton {
@@ -144,6 +145,7 @@ class Ui_plakaeklemepenceresi(object):
         # Ekle butonu
         self.pushButton_2 = QPushButton(self.frame)
         self.pushButton_2.setObjectName(u"pushButton_2")
+        self.pushButton_2.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.pushButton_2.setGeometry(QRect(210, 290, 131, 41))
         self.pushButton_2.setStyleSheet(u"""
             QPushButton {

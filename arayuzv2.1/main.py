@@ -92,7 +92,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         
         # Pencere ayarları
-        self.setWindowTitle("Plaka Tanıma Sistemi v2.0")
+        self.setWindowTitle("Plaka Tanıma Sistemi v2.1")
         self.setMinimumSize(1200, 600)
         
         # Plakalar dosyası
@@ -156,7 +156,7 @@ class MainWindow(QMainWindow):
     
     def show_settings(self):
         """Ayarlar sayfasını göster"""
-        self.ui.stackedWidget.setCurrentWidget(self.ui.page_about)
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page_home)
         self.update_button_styles('settings')
         self.statusBar().showMessage("Ayarlar - Henüz aktif değil")
         QMessageBox.information(self, "Bilgi", "Ayarlar sayfası yakında eklenecektir.")
@@ -310,8 +310,9 @@ class MainWindow(QMainWindow):
                                         background-color: #666867;
                                     }
                                 """)
+                                edit_btn.setCursor(Qt.PointingHandCursor)  # El simgesi
                                 edit_btn.clicked.connect(lambda checked, r=row_position: self.edit_plate_at_row(r))
-                                
+                            
                                 # Sil butonu
                                 delete_btn = QPushButton("sil")
                                 delete_btn.setStyleSheet("""
@@ -326,6 +327,7 @@ class MainWindow(QMainWindow):
                                         background-color: #c82333;
                                     }
                                 """)
+                                delete_btn.setCursor(Qt.PointingHandCursor)  # El simgesi
                                 delete_btn.clicked.connect(lambda checked, r=row_position: self.delete_plate_at_row(r))
                                 
                                 # Butonları layout'a ekle
@@ -493,7 +495,7 @@ class MainWindow(QMainWindow):
     def show_manual(self):
         """Kullanım kılavuzunu göster"""
         manual_text = """
-🚗 PLAKA TANIMA SİSTEMİ KULLANIM KILAVUZU v2.0
+🚗 PLAKA TANIMA SİSTEMİ KULLANIM KILAVUZU v2.1
 
 📍 ANASAYFA:
 • Kamera görüntüsü bu bölümde gösterilir
@@ -520,10 +522,9 @@ class MainWindow(QMainWindow):
 • Plaka eklerken Enter tuşuna basabilirsiniz
 • Plakalar otomatik büyük harfe çevrilir
 • Durum çubuğundan sistem durumunu takip edebilirsiniz
-• Modal pencereler dışarı tıklanarak kapatılabilir
 
 🔧 SİSTEM BİLGİLERİ:
-• Versiyon: 1.0
+• Versiyon: 2.1
 • Platform: PySide6 / Qt
 • Dosya formatı: UTF-8 Text
         """
@@ -532,6 +533,19 @@ class MainWindow(QMainWindow):
         msg = QMessageBox(self)
         msg.setWindowTitle("Kullanım Kılavuzu")
         msg.setText(manual_text)
+        msg.setWindowFlags(Qt.Dialog | Qt.FramelessWindowHint)
+        msg.setStyleSheet("""
+            QMessageBox {
+                background-color: #2b2b2b;
+                border-radius: 0px;
+                border: 2px solid #3b3b3b;
+            }
+            QMessageBox QLabel {
+                font-size: 15px;
+                line-height: 1.5;
+                background-color: #2b2b2b;
+            }
+        """)
         msg.setIcon(QMessageBox.Icon.Information)
         msg.exec()
 

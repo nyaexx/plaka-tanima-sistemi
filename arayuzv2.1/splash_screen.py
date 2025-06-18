@@ -83,6 +83,17 @@ class SplashScreen(QDialog):
         content_layout.addWidget(title)
         content_layout.addWidget(self.subtitle)
         content_layout.addWidget(self.progress, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        # "made by nyaex" etiketi (orta-alt)
+        madeby = QLabel("made by nyaex")
+        madeby.setStyleSheet("""
+            color: #787FF5;
+            font-size: 18px;
+            font-style: italic;
+            margin-top: 40px;
+        """)
+        madeby.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        content_layout.addWidget(madeby)
         content_layout.addStretch()
         
         # Ana container'a ekle

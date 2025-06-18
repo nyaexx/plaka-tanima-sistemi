@@ -238,6 +238,7 @@ class Ui_MainWindow(object):
         
         # Plaka ekle butonu
         self.btn_save_plate = QPushButton(self.page_plates)
+        self.btn_save_plate.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_save_plate.setObjectName(u"btn_save_plate")
         self.btn_save_plate.setStyleSheet(u"""
             QPushButton {
@@ -259,6 +260,7 @@ class Ui_MainWindow(object):
         
         # Hepsini sil butonu
         self.btn_clear_plate = QPushButton(self.page_plates)
+        self.btn_clear_plate.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_clear_plate.setObjectName(u"btn_clear_plate")
         self.btn_clear_plate.setStyleSheet(u"""
             QPushButton {
@@ -280,25 +282,50 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.page_plates)
         self.page_about = QWidget()
         self.page_about.setObjectName(u"page_about")
+        self.page_about.setStyleSheet("")  # Arka planı frame'e vereceğiz
         self.verticalLayout_about = QVBoxLayout(self.page_about)
         self.verticalLayout_about.setObjectName(u"verticalLayout_about")
-        self.verticalLayout_2 = QVBoxLayout()
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.frame1 = QFrame(self.page_about)
-        self.frame1.setObjectName(u"frame1")
-        self.frame1.setStyleSheet(u"QFrame {\n"
-"    background-color: #282b30;\n"
-" 	border-radius: 6px;\n"
-"}")
-        self.frame1.setFrameShape(QFrame.StyledPanel)
-        self.frame1.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_about.setContentsMargins(0, 0, 0, 0)
 
-        self.verticalLayout_2.addWidget(self.frame1)
+        # Yuvarlak köşeli arka plan frame'i
+        self.about_bg_frame = QFrame(self.page_about)
+        self.about_bg_frame.setObjectName(u"about_bg_frame")
+        self.about_bg_frame.setStyleSheet("""
+            QFrame#about_bg_frame {
+                background-color: #282b30;
+                border-radius: 12px;
+            }
+        """)
+        self.about_bg_frame.setFrameShape(QFrame.StyledPanel)
+        self.about_bg_frame.setFrameShadow(QFrame.Raised)
+        self.about_bg_layout = QVBoxLayout(self.about_bg_frame)
+        self.about_bg_layout.setContentsMargins(0, 0, 0, 0)
+        self.about_bg_layout.setSpacing(0)
 
+        # Ortada "made by nyaex"
+        self.about_bg_layout.addStretch()
+        self.label_madeby = QLabel(self.about_bg_frame)
+        self.label_madeby.setObjectName(u"label_madeby")
+        self.label_madeby.setText("made by nyaex")
+        self.label_madeby.setAlignment(Qt.AlignCenter)
+        self.label_madeby.setStyleSheet("""
+            QLabel {
+                color: #787FF5;
+                font-size: 22px;
+                font-style: italic;
+                margin-top: 100px;
+                margin-bottom: 100px;
+                background: transparent;
+            }
+        """)
+        self.about_bg_layout.addWidget(self.label_madeby)
+        self.about_bg_layout.addStretch()
 
-        self.verticalLayout_about.addLayout(self.verticalLayout_2)
+        self.verticalLayout_about.addWidget(self.about_bg_frame)
 
+        # Kullanım kılavuzu butonu
         self.btn_manual = QPushButton(self.page_about)
+        self.btn_manual.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_manual.setObjectName(u"btn_manual")
         self.btn_manual.setStyleSheet(u"QPushButton {\n"
 "    background-color: #68696b;       /* Arka plan beyaz */\n"
@@ -313,7 +340,6 @@ class Ui_MainWindow(object):
 "    background-color: #777777;\n"
 "}\n"
 "FAD7B5")
-
         self.verticalLayout_about.addWidget(self.btn_manual)
 
         self.stackedWidget.addWidget(self.page_about)
